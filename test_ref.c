@@ -10,6 +10,10 @@ enum { INS, DEL, WRDMAX = 256, STKMAX = 512, LMAX = 1024 };
 #define REF INS
 #define CPY DEL
 
+/****/
+char word2[260000][WRDMAX];
+/****/
+
 /* timing helper function */
 static double tvgetf(void)
 {
@@ -42,6 +46,9 @@ int main(int argc, char **argv)
     int rtn = 0, idx = 0, sidx = 0;
     FILE *fp = fopen(IN_FILE, "r");
     double t1, t2;
+    /*****/
+    int count=0;
+    /*****/
 
     if (!fp) { /* prompt, open, validate file for reading */
         fprintf(stderr, "error: file open failed '%s'.\n", argv[1]);
@@ -49,8 +56,8 @@ int main(int argc, char **argv)
     }
 
     t1 = tvgetf();
-    while ((rtn = fscanf(fp, "%s", word)) != EOF) {
-        char *p = word;
+    while ((rtn = fscanf(fp, "%s", word2[count])) != EOF) {
+        char *p = word2[count++];
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
@@ -149,7 +156,7 @@ int main(int argc, char **argv)
             }
             break;
         case 'q':
-            tst_free_all(root);
+            tst_free(root);
             return 0;
             break;
         default:
